@@ -1,19 +1,31 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
 <%@page import="tw.billy.conn.DataBaseConnection"%>
 <%@page import="tw.billy.model.*"%>
 <%@page import="java.util.*"%>
+<%@page import="javax.servlet.http.*"%>
 
 <%
-ArrayList<Cart> cart_list = (ArrayList) session.getAttribute("cart-list");
-List<Cart> cartProduct = null;
-if (cart_list != null) {
-	ProductDao pDao = new ProductDao(DataBaseConnection.getConnection());
-	cartProduct = pDao.getCartProducts(cart_list);
-	int total = pDao.getTotalCartPrice(cart_list);
-	request.setAttribute("cart_list", cart_list);
-	request.setAttribute("total", total);
-}
+
+List<OrderDetail> orders = null;
+//已經有session
+//HttpSession session1 = = request.getSession(false); //Duplicate local variable session
+Integer userId = (Integer) session.getAttribute("userId");
+//驗證登入
+//if(userId != null){
+	orders = new OrderDetailDao(DataBaseConnection.getConnection()).UserOrders(userId);
+
+//}else{
+	//response.sendRedirect("login.jsp");
+//}
+	 ArrayList<Cart> cart_list = (ArrayList) session.getAttribute("cart-list");
+	 if (cart_list != null) {
+	 	ProductDao pDao = new ProductDao(DataBaseConnection.getConnection());
+	 	request.setAttribute("cart_list", cart_list);
+	 }
+
+
+
+
 %>
 
 <!DOCTYPE html>
@@ -29,7 +41,7 @@ if (cart_list != null) {
 <link rel="stylesheet" href="css/product.css">
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-<title>Cart Page</title>
+<title>確認訂單</title>
 </head>
 <body>
 	<%@include file="include/header.jsp"%>
@@ -43,14 +55,14 @@ if (cart_list != null) {
 
 			<div class="container">
 				<div class="card-header my-3">
-					<h1>實體商品購物車</h1>
+					<h1>所有訂單</h1>
 				</div>
 				<table class="table table-loght" style="text-align: center;">
 					<thead class="thead-light">
 						<tr>
 
-							<th scope="col"><h2>商品名稱</h2></th>
-							<th scope="col"></th>
+							<th scope="col"><h2>訂單日期</h2></th>
+							<th scope="col"><h2>名稱</h2></th>
 							<th scope="col"><h2>商品類別</h2></th>
 							<th scope="col"><h2>個數</h2></th>
 							<th scope="col"><h2>金額</h2></th>
@@ -60,45 +72,22 @@ if (cart_list != null) {
 					</thead>
 					<tbody>
 						<%
-						if (cart_list != null) {
-							for (Cart c : cartProduct) {
+						if (orders != null) {
+							for (OrderDetail od : orders) {
 						%>
 						<tr>
-							<td><h4><%=c.getName()%></h4></td>
+							<td><h4><%=od.getDate()%></h4></td>
+							<td><h4><%=od.getName()%></h4></td>
 							<td><img alt="cart-img"
-								src="products_img/<%=c.getFilename()%>"></td>
-							<td><h4><%=c.getCategory()%></h4></td>
-							<td>
-								<form action="order-now" method="post" class="form-inline">
-									<input type="hidden" name="id" value="<%=c.getPid()%>"
-										class="for-input">
-									<div class="form-group d-flex justify-content-between w-50">
-										<!-- 減號 -->
-										<a class="btn btn-sm btn-decre"
-											href="quantity-inc-dec?action=dec&id=<%=c.getPid()%>"> <i
-											class="fas fa-minus-square"></i>
-										</a> <input type="text" name="quantity" class="form-control w-50"
-											value="<%=c.getQuantity()%>" readonly size="5px">
-										<!-- 加號 -->
-										<a class="btn btn-sm btn-incre"
-											href="quantity-inc-dec?action=inc&id=<%=c.getPid()%>"> <i
-											class="fas fa-plus-square"></i>
-										</a>
-									</div>
-									<button type="submit" class="btn btn-primary btn-sm">BUY</button>
-								</form>
-							</td>
-							<td><h4><%=c.getPrice()%></h4></td>
-							<!-- 移除 -->
+								src="products_img/<%=od.getFilename()%>"></td>
+							<td><h4><%=od.getCategory()%></h4></td>
+							<td><h4><%=od.getQuantity()%></h4></td>
+							<td><h4><%=od.getPrice()%></h4></td>
 							<td><a class="btn btn-sm btn-secondary"
-								href="remove-from-cart?id=<%=c.getPid()%>"><i
+								href="cancel-order?id=<%=od.getOrderdetailid()%>"><i
 									class="fas fa-trash-alt"></i></a></td>
-						</tr>
-						<%
-						}
-						}
-						%>
-					
+						<% }
+						}%>
 				</table>
 
 				<div class="d-flex py-3" style="float: right">

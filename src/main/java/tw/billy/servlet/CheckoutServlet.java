@@ -27,7 +27,7 @@ public class CheckoutServlet extends HttpServlet {
 		try (PrintWriter out = response.getWriter()) {
 			// out.println("check out select");
 
-			SimpleDateFormat formatter = new SimpleDateFormat("yyy-MM-dd");
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date date = new Date();
 			
 			// 取回 all cart product			

@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@page import="tw.billy.conn.DataBaseConnection"%>
 <%@page import="tw.billy.model.*"%>
-<%@ page import="java.util.*"%>    
+<%@page import="java.util.*"%>    
    
 <%
 ArrayList<Cart> cart_list = (ArrayList) session.getAttribute("cart-list");
@@ -24,7 +24,7 @@ if(cart_list != null){
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="css/headerfooter.css">
-    <link rel="stylesheet" href="css/product.css">
+<!--     <link rel="stylesheet" href="css/product.css"> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <title>Cart Page</title>
 </head>
@@ -69,7 +69,7 @@ if(cart_list != null){
                                          <a class="btn btn-sm btn-decre" href="quantity-inc-dec?action=dec&id=<%=c.getPid()%>">
                                              <i class="fas fa-minus-square"></i>
                                          </a>
-                                         <input type="text" name="quantity" class="form-control w-50" value="<%=c.getQuantity() %>" readonly size="5px">
+                                         <input type="text" name="quantity" class="form-control w-50" value="<%=c.getQuantity()%>" readonly size="5px">
                                           <!-- 加號 -->
                                          <a class="btn btn-sm btn-incre" href="quantity-inc-dec?action=inc&id=<%=c.getPid()%>">
                                              <i class="fas fa-plus-square"></i>
@@ -93,7 +93,7 @@ if(cart_list != null){
                     <h3>總金額: ${ (total>0)?total:0 } 元</h3>
                     <!--所有購物車商品加入訂單  -->
                     <form action="order-now" method="post" class="form-inline">
-						<button type="submit" class="btn btn-primary btn-sm">確認訂單</button>
+						<button type="submit" class="btn btn-primary btn-sm">確認結帳</button>
 					</form>
                     <a class="mx-3 btn btn-primary" href="real_Products.jsp">繼續購物</a>
                 </div>

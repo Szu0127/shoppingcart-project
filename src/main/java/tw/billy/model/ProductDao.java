@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +17,7 @@ public class ProductDao {
 		this.conn = conn;
 	}
 
+	// 取得所有商品
 	public List<Product> getAllProducts() {
 		List<Product> products = new ArrayList<Product>();
 
@@ -25,7 +25,7 @@ public class ProductDao {
 		try {
 			pstmt = this.conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
-			
+
 			while (rs.next()) {
 				Product ps = new Product();
 				ps.setPid(rs.getInt("product_ID"));
@@ -44,6 +44,7 @@ public class ProductDao {
 		return products;
 	}
 
+	// 取得單一商品(AddToCart)
 	public List<Cart> getCartProducts(ArrayList<Cart> cartList) {
 		List<Cart> products = new ArrayList<Cart>();
 
@@ -54,7 +55,7 @@ public class ProductDao {
 					pstmt = this.conn.prepareStatement(sql1);
 					pstmt.setInt(1, item.getPid());
 					rs = pstmt.executeQuery();
-					
+
 					while (rs.next()) {
 						Cart row = new Cart();
 
@@ -74,7 +75,31 @@ public class ProductDao {
 		return products;
 	}
 
-	//計算購物車總金額
+	// 取得單一商品
+	public Product getSingleProduct(int pid) {
+		Product p = null;
+		String sqlStr = " select * from products where product_ID=?";
+		try {
+
+			PreparedStatement pstmt = conn.prepareStatement(sqlStr);
+			pstmt.setInt(1, pid);
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				p = new Product();
+				p.setPid(rs.getInt("product_ID"));
+				p.setName(rs.getString("product_name"));
+				p.setCategory(rs.getString("category"));
+				p.setPrice(rs.getInt("product_price"));
+				p.setFilename(rs.getString("filename"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return p;
+	}
+
+	// 計算購物車總金額
 	public Integer getTotalCartPrice(ArrayList<Cart> cartList) {
 		int sum = 0;
 
@@ -96,31 +121,4 @@ public class ProductDao {
 		}
 		return sum;
 	}
-	
-	public Product queryProductInfo(int pid) {
-
-       Product p = new Product();
-        
-        String sqlStr = " select * from products where id=" + pid;
-        try {
-            
-            Statement stmt = conn.createStatement();           
-            ResultSet rs = stmt.executeQuery(sqlStr);
-      
-            while (rs.next()) {
-                p.setName(rs.getString("product_name"));
-                p.setCategory(rs.getString("category"));
-                p.setPrice(rs.getInt("product_price"));
-                p.setQuantity(rs.getInt("product_quantity"));
-                p.setFilename(rs.getString("filename"));
-
-            }
-            rs.close();
-  
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return p ;
-    }
-
 }

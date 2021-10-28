@@ -1,15 +1,17 @@
 package tw.billy.model;
 
-public class OrderDetail {
+public class OrderDetail extends Product{
 
 	private int orderdetailid;
-	private Order orderNo;
+	private String orderNo;
 	private int pid;
 	private int uid;
 	private int orderquentity;
 	private String date;
 
-	// private int subtotal;// 小計
+	
+
+	
 
 	public OrderDetail() {
 
@@ -23,11 +25,11 @@ public class OrderDetail {
 		this.orderdetailid = orderdetailid;
 	}
 
-	public Order getOrderNo() {
+	public String getOrderNo() {
 		return orderNo;
 	}
 
-	public void setOrderNo(Order orderNo) {
+	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
 	}
 
@@ -43,8 +45,8 @@ public class OrderDetail {
 		return uid;
 	}
 
-	public int setUid(int uid) {
-		return this.uid = uid;
+	public void setUid(int uid) {
+		this.uid = uid;
 	}
 
 	public int getOrderquentity() {
@@ -63,12 +65,8 @@ public class OrderDetail {
 		this.date = date;
 	}
 
-//	public int getSubtotal() {
-//		return subtotal;
-//	}
-//
-//	public void setSubtotal(int subtotal) {
-//		this.subtotal = subtotal;
-//	}
+	
+
+
 
 }

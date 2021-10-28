@@ -26,19 +26,19 @@ public class OrderNowServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		try (PrintWriter out = response.getWriter()) {
-            //取得日期
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			// 取得日期
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date date = new Date();
-			
-            //預設取得UserID
+
+			// 預設取得UserID
 			HttpSession session = request.getSession(false);
 			Integer userId = (Integer) session.getAttribute("userId");
- 
-			//身分驗證  
+
+			// 身分驗證
 			if (userId != null) {
 				String productId = request.getParameter("id");// 取得的pid字串 //.jsp
 				int pQuentity = Integer.parseInt(request.getParameter("quantity"));// 取得購買數量
-
+				
 				if (pQuentity <= 0) {
 					pQuentity = 1;
 				}
@@ -48,11 +48,14 @@ public class OrderNowServlet extends HttpServlet {
 				orderModel.setUid(userId);
 				orderModel.setOrderquentity(pQuentity);
 				orderModel.setDate(formatter.format(date));
-                //連線OrderDetailDao odDao = new OrderDetailDao(DataBaseConnection.getConnection());
+				
+				
+				// 連線OrderDetailDao odDao = new
+				// OrderDetailDao(DataBaseConnection.getConnection());
 				OrderDetailDao odDao = new OrderDetailDao(DataBaseConnection.getConnection());
 				// insert into DB
 				boolean result = odDao.InsertOrderDetail(orderModel, userId);
-
+               
 				if (result) {
 					// remove cartlist
 					ArrayList<Cart> cart_list = (ArrayList<Cart>) request.getSession().getAttribute("cart-list");

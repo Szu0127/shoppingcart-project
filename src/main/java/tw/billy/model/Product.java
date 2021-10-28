@@ -2,11 +2,11 @@ package tw.billy.model;
 
 public class Product {
 	
-	private Integer pid;	
+	private int pid;	
 	private String name;
 	private String category;	
-	private Integer price;	
-	private Integer quantity;	
+	private int price;	
+	private int quantity;	
 	private String filename;
 
 	
@@ -24,11 +24,11 @@ public class Product {
 
 	}
 
-	public Integer getPid() {
+	public int getPid() {
 		return pid;
 	}
 
-	public void setPid(Integer pid) {
+	public void setPid(int pid) {
 		this.pid = pid;
 	}
 
@@ -48,11 +48,11 @@ public class Product {
 		this.category = category;
 	}
 
-	public Integer getPrice() {
+	public int getPrice() {
 		return price;
 	}
 
-	public void setPrice(Integer price) {
+	public void setPrice(int price) {
 		this.price = price;
 	}
 
@@ -60,7 +60,7 @@ public class Product {
 		return quantity;
 	}
 
-	public void setQuantity(Integer quantity) {
+	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
 
@@ -72,5 +72,6 @@ public class Product {
 		this.filename = filename;
 	}
 
+	
 
 }

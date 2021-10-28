@@ -12,9 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import tw.billy.model.Cart;
 
-/**
- * Servlet implementation class QuantityincDecServlet
- */
+
 @WebServlet("/quantity-inc-dec")
 public class QuantityincDecServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
