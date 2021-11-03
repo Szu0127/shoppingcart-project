@@ -14,22 +14,23 @@ import javax.servlet.http.HttpSession;
 import tw.billy.model.Cart;
 
 
-@WebServlet("/add-to-cart")//加入購物車
-public class AddToCartServlet extends HttpServlet {
+@WebServlet("/buynow-tocart")
+public class BuyNowToCartServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+   
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
 		
 		try(PrintWriter out = response.getWriter()){
 			ArrayList<Cart> cartList = new ArrayList<>();
-			//shopping-cart/add-to-cart?id=1
+			//shopping-cart/buy-now?id=1
 			
 			int id = Integer.parseInt(request.getParameter("id"));
+		
 			Cart cm = new Cart();
 			cm.setPid(id);
 			cm.setQuantity(1);//設定數量			
-			
+		
 			
 			//連線
 			HttpSession session = request.getSession();
@@ -38,10 +39,11 @@ public class AddToCartServlet extends HttpServlet {
 			if(cart_list == null) {//當購物車都沒有物品時
 				cartList.add(cm);//加入購物車
 				session.setAttribute("cart-list", cartList);//設屬性為cart-list
+				
 				//out.println("session created and added the list");
 				//購物車創建並添加進列表
 				//We are storing them in our session.
-				response.sendRedirect("real_Products.jsp");
+				response.sendRedirect("cart.jsp");
 			}else {//當cart已經有商品時加入List中
 				//out.println("cart add exist");//已添加進購物車
 				cartList = cart_list;
@@ -57,7 +59,7 @@ public class AddToCartServlet extends HttpServlet {
 						exist = true;
 						
 						out.println("<script>");
-						out.println("alert('已成功加入購物車');");//中文字顯示不出
+						out.println("alert('已成功加入購物車');");
 						out.println("window.location.href='cart.jsp';");
 						out.println("</script>");
 						out.close();
@@ -67,7 +69,7 @@ public class AddToCartServlet extends HttpServlet {
 					if(!exist) {
 						cartList.add(cm);
 						//已被加入(已存在的購物車內再添加入商品)
-						response.sendRedirect("real_Products.jsp");
+						response.sendRedirect("cart.jsp");
 				}
 			}
 //			for(Cart c:cart_list) {
@@ -76,5 +78,6 @@ public class AddToCartServlet extends HttpServlet {
 			
 		}
 	}
-}
+	}
 
+	

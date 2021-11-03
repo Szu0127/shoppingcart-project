@@ -2,7 +2,7 @@ package tw.billy.model;
 
 public class Order extends Product{
 
-	private Integer orderNo;
+	private String orderNo;
 
 	private int uid;// userId
 
@@ -14,11 +14,11 @@ public class Order extends Product{
 
 	}
 
-	public Integer getOrderNo() {
+	public String getOrderNo() {
 		return orderNo;
 	}
 
-	public void setOrderNo(Integer orderNo) {
+	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
 	}
 

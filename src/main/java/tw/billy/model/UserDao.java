@@ -320,4 +320,48 @@ public class UserDao {
 		}
 		return list;
 	}
+	
+	//確認餘額
+	public User getUserAmount(Integer userId) {
+		try {
+			Class.forName(DRIVER);
+		} catch (ClassNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		User user = null;
+		String sql = "select user_amount from user_data where user_ID = ?";
+		try(Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)){
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, userId);
+			ResultSet rs = pstmt.executeQuery();
+			
+			if(rs.next() == true) {
+				user = new User();
+				user.setAmount(rs.getInt("user_amount"));
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return user;
+	}
+	
+	//購買影片後跳扣款
+	public void buyVideoUseAmount(Integer videoPrice, Integer userId) {
+		try {
+			Class.forName(DRIVER);
+		} catch (ClassNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		String sql = "update user_data set user_amount = user_amount - ? where user_ID = ?";
+		try(Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)){
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, videoPrice);
+			pstmt.setInt(2, userId);
+			pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

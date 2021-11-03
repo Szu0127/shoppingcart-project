@@ -21,18 +21,18 @@ public class OrderDetailDao {
 		try {
 
 			String strsql = "INSERT INTO [dbo].[orderdetails]\r\n"
-					+ " ([orderNo],[product_ID],[user_ID],[order_quantity],[date]) VALUES(?,?,?,?,?)";
+					+ " ([orderNo],[product_ID],[order_quantity],[date]) VALUES(?,?,?,?)";
 
 			PreparedStatement pstmt = conn.prepareStatement(strsql);
 
-			
 			// OrderDao oDao = new OrderDao(conn);//連線
 			OrderDao oDao = new OrderDao(this.conn);
-			pstmt.setString(1, oDao.getOrderNo(uid));
+			//pstmt.setString(1, oDao.getOrderNo(uid));
+			pstmt.setString(1, model.getOrderNo());
 			pstmt.setInt(2, model.getPid());
-			pstmt.setInt(3, model.getUid());
-			pstmt.setInt(4, model.getOrderquentity());
-			pstmt.setString(5, model.getDate());
+			//pstmt.setInt(3, model.getUid());
+			pstmt.setInt(3, model.getOrderquentity());
+			pstmt.setString(4, model.getDate());
 			if (pstmt.executeUpdate() > 0) {
 				result = true;
 			}
@@ -48,29 +48,27 @@ public class OrderDetailDao {
 	public List<OrderDetail> UserOrders(int uid) {
 		List<OrderDetail> list = new ArrayList<>();
 		try {
-			// orderdetail_ID由大至小排序(DESC)=>由最近一筆訂單為優先做排序
-			// ORDER BY ASC 由小到大
-			String sqlstr = "SELECT * FROM orderdetails WHERE user_ID = ? ORDER BY orderdetails.orderdetail_ID DESC";
-
+			
+            String sqlstr = "SELECT date,o.orderNo, p.product_name,p.filename, order_quantity, total_price\r\n"
+            		+ "  FROM products p, [dbo].[order] o, orderdetails ord  \r\n"
+            		+ "  WHERE o.orderNo =ord.orderNo AND p.product_ID = ord.product_ID AND user_ID = ?\r\n"
+            		+ "  ORDER BY ord.orderdetail_ID DESC";
+            
 			PreparedStatement pstmt = conn.prepareStatement(sqlstr);
 			pstmt.setInt(1, uid);
 			ResultSet rs = pstmt.executeQuery();
-
+            
+			//rs抓orderdetail
 			while (rs.next()) {
-				OrderDetail odBean = new OrderDetail();
-				ProductDao pDao = new ProductDao(this.conn);
+				
+				OrderDetail od = new OrderDetail();
 
-				int pid = rs.getInt("product_ID");
-				Product product = pDao.getSingleProduct(pid);
-				odBean.setOrderdetailid(rs.getInt("orderdetail_ID"));
-				odBean.setOrderNo(rs.getString("orderNo"));
-				odBean.setName(product.getName());// 商品名稱
-				odBean.setCategory(product.getCategory());// 商品類別
-				// odBean.set(product.getPrice()*rs.getInt("order_quentity"));//訂單總金額
-				odBean.setOrderquentity(rs.getInt("order_quantity"));// 訂單數量
-				odBean.setDate(rs.getString("date"));
-				list.add(odBean);
-
+				od.setDate(rs.getString("date"));				
+				od.setOrderNo(rs.getString("orderNo"));
+				od.setName(rs.getString("product_name"));			
+				od.setFilename(rs.getString("filename"));
+				od.setOrderquentity(rs.getInt("order_quantity"));// 訂單數量				
+				list.add(od);
 			}
 
 		} catch (Exception e) {
@@ -78,5 +76,18 @@ public class OrderDetailDao {
 		}
 		return list;
 	}
+    
+	//刪除訂單(未結帳)
+	public void cancelOrder(int oid) {
+		try {
+			String sql = "DELETE FROM orderdetails where orderdetail_ID =?"; 
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, oid);
+			pstmt.execute();
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 
+	}
 }

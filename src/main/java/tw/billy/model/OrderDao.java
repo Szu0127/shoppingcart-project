@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import tw.billy.conn.DataBaseConnection;
+
 public class OrderDao {
 	
 	private Connection conn;
@@ -38,18 +40,21 @@ public class OrderDao {
 	
 	
     //添加訂單
-	public boolean addOrder(String orderNo,int uid) {
+	public boolean addOrder(Order or,int uid) {
 		boolean result = false;
 		
 		try{
 			String query = "INSERT INTO [dbo].[order]\r\n"
-					+ "([orderNo],[total_price],[order_date]) VALUES (?,?,?,?)";
+					+ "([orderNo],[user_ID],[total_price],[order_date]) VALUES (?,?,?,?)";
 			
 			PreparedStatement pstmt = conn.prepareStatement(query);
-			Order or = new Order();
-			pstmt.setString(1, orderNo);
+			//Order or = new Order();
+			//Product product = new Product();
+			pstmt.setString(1, or.getOrderNo());
 			pstmt.setInt(2, or.getUid());//[user_ID]
 			pstmt.setInt(3, or.getTotalprice() );
+			//匯入物品數量與購買單價=>總金額
+			//pstmt.setInt(3, product.getPrice()*od.getOrderquentity());
 			pstmt.setString(4, or.getDate());
 			if (pstmt.executeUpdate() > 0) {
 				result = true;
@@ -75,86 +80,70 @@ public class OrderDao {
         return flag;
     }
 	
-	// 根據用戶ID查找訂單列表
-    public List<Order> getOrderInfo(int userid) {
-        List<Order> orders = new ArrayList<Order>();
-        
-        String sqlStr = "select * from Order where user_ID = "+userid;
-        try {            
-        	PreparedStatement pstmt = conn.prepareStatement(sqlStr);
-            ResultSet rs = pstmt.executeQuery();
+ // 查詢當次購物車明細
+    //由orderNo查詢購物明細
+ 	public List<OrderDetail> getlistByOrderNo(String orderNo) {
+ 		List<OrderDetail> list = new ArrayList<>();
+ 		try {
+ 			
+ 			String sqlstr = "SELECT p.product_ID, p.product_name,p.filename, order_quantity, total_price, order_date , orderdetail_ID\r\n"
+ 					+ "FROM products p, [dbo].[order] o, orderdetails ord  \r\n"
+ 					+ "WHERE o.orderNo =ord.orderNo\r\n"
+ 					+ "AND p.product_ID = ord.product_ID\r\n"
+ 					+ "AND o.orderNo = ?";
+ 			PreparedStatement pstmt = conn.prepareStatement(sqlstr);
+ 			pstmt.setString(1, orderNo);
+ 			ResultSet rs = pstmt.executeQuery();
+             
+ 			//rs抓orderdetail
+ 			while (rs.next()) {
+ 				//Order or = new Order();
+ 				ProductDao pDao = new ProductDao(this.conn);
+ 				OrderDetail od = new OrderDetail();
 
-            while (rs.next()) {     
-                 Order order = new Order();
-                 order.setOrderNo(rs.getInt("orderNo"));
-                 order.setTotalprice(rs.getInt("total_price"));
-                
-                 // 訂單表中的 user
-                 User user = new User();
-                 user.setId(rs.getInt("user_ID"));
- //                order.setUid(user.getId());
+ 				int pid = rs.getInt("product_ID");
+ 				Product product = pDao.getSingleProduct(pid);	
+ 				
+ 				od.setName(product.getName());// 商品名稱
+ 				od.setFilename(product.getFilename());
+ 				od.setOrderquentity(rs.getInt("order_quantity"));// 訂單數量
+ 				od.setDate(rs.getString("order_date"));
+ 				od.setOrderdetailid(rs.getInt("orderdetail_ID"));
+ 				list.add(od);
+ 			}
+ 			rs.close();
+ 		} catch (Exception e) {
+ 			e.printStackTrace();
+ 		}
+ 		return list;
+ 	}
 
-                 orders.add(order);
-             }
-             rs.close();
-         } catch (SQLException e) {
-             e.printStackTrace();
-         }
-         return orders;
-     }
+ 	//用userId查詢最新訂單編號
+   public String getuserneworderNo(int uid) {
+	   String orderNo = null;
+	        //顯示最近一次訂單
+	        String sqlStr = "\r\n"
+	        		+ "   Select o.orderNo From  [dbo].[order] o  \r\n"
+	        		+ "   Where o.order_ID = "
+	        		+ "                    (Select Max(o.order_ID) "
+	        		+ "                     From [dbo].[order] o  "
+	        		+ "                     Where  user_ID = ?)";
+	        try {
+	            
+	        	PreparedStatement pstmt = conn.prepareStatement(sqlStr);
+	        	pstmt.setInt(1,uid);
+	            ResultSet rs = pstmt.executeQuery();
+	            
+	            if(rs.next()) {
+	            	orderNo = rs.getString("orderNo");
+	            }
+	            rs.close();
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return orderNo;
+	    }
+	   
 
-    // 獲得所有訂單
-    public List<Order> getAllOrders() {
-        List<Order> orders = new ArrayList<Order>();
-        //  join
-        String sqlStr = "SELECT [orderNO],[user_ID],[total_price],[order_date]\r\n"
-        		+ "  FROM [dbo].[order],[dbo].[user] "
-        		+ "where [dbo].[order].[user_ID] = [dbo].[user].[user_ID] ";
-
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sqlStr);
-            
-            while (rs.next()) {
-                
-                Order order = new Order();                
-                order.setOrderNo(rs.getInt("order_ID"));
-                order.setTotalprice(rs.getInt("total_price"));
-
-                User user = new User();
-                user.setId(rs.getInt("user_ID"));
-                user.setName(rs.getString("user_name"));
-//                order.setUid(user);
-                
-                orders.add(order);
-            }
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return orders;
-    }
-
-    
-     
-    //根據OrderNo取得UserID
-    public Integer getUserIdByOrderId(int orderNo) {
-        // 顯示最近一次訂單
-    	String sqlStr = "select user_ID from order  where orderNo = "+ orderNo ;
-        int userid = 0;
-        try {
-  
-        	PreparedStatement pstmt = conn.prepareStatement(sqlStr);
-            ResultSet rs = pstmt.executeQuery();
-            
-            if(rs.next()) {
-                userid = rs.getInt(1);
-            }
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return userid;
-    }
 
 }

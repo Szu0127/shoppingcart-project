@@ -77,7 +77,8 @@ if(cart_list !=null){
 									<!-- 加入購物車傳到/add-to-cart?id=?-->
 									<a href="add-to-cart?id=<%=p.getPid()%>" class="btn btn-dark">加到購物車</a>
 									<!-- 直接進入購物車結帳畫面 -->
-									<a href="order-now?quantity=1&id=<%=p.getPid() %>" class="btn btn-primary">立即購買</a>
+<%-- 									<a href="order-now?quantity=1&id=<%=p.getPid() %>" class="btn btn-primary">立即購買</a> --%>
+									<a href="buynow-tocart?id=<%=p.getPid()%>" class="btn btn-primary">立即購買</a>
 								</div>
 							</div>
 						</div>
@@ -110,7 +111,7 @@ if(cart_list !=null){
 								<div class="mt-3 d-flex justify-content-between">
 									<!-- 加入購物車傳到/add-to-cart?id=?-->
 									<a href="add-to-cart?id=<%=p.getPid()%>" class="btn btn-primary">加到購物車</a>
-									<a href="#" class="btn btn-primary">立即購買</a>
+									<a href="add-to-cart?id=<%=p.getPid()%>" class="btn btn-primary">立即購買</a>
 								</div>
 							</div>
 						</div>

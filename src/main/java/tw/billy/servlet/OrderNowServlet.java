@@ -18,7 +18,7 @@ import tw.billy.model.Cart;
 import tw.billy.model.OrderDetail;
 import tw.billy.model.OrderDetailDao;
 
-@WebServlet("/order-now")
+@WebServlet("/order-now")//單一商品加入訂單   資料庫
 public class OrderNowServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -45,7 +45,7 @@ public class OrderNowServlet extends HttpServlet {
 
 				OrderDetail orderModel = new OrderDetail();
 				orderModel.setPid(Integer.parseInt(productId));// 轉回int
-				orderModel.setUid(userId);
+				//orderModel.setUid(userId);
 				orderModel.setOrderquentity(pQuentity);
 				orderModel.setDate(formatter.format(date));
 				
@@ -75,6 +75,7 @@ public class OrderNowServlet extends HttpServlet {
 
 			} else {
 				response.sendRedirect("login.jsp");
+				
 			}
 
 		} catch (Exception e) {

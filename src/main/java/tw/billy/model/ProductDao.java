@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,4 +122,64 @@ public class ProductDao {
 		}
 		return sum;
 	}
-}
+
+	//添加商品
+		public boolean addProduct(Product newproduct) {
+
+	        boolean result = false;
+	        
+	        String sqlStr = "insert into [dbo].[products] ([product_name],[category],[product_price],[filename]) \r\n"
+	        		+ "      values(?,?,?,?);";
+	        try {
+	            
+	            PreparedStatement pstmt = conn.prepareStatement(sqlStr);
+	            pstmt.setString(1, newproduct.getName());
+	            pstmt.setString(2, newproduct.getCategory());
+	            pstmt.setInt(3, newproduct.getPrice());
+	            pstmt.setString(4, newproduct.getFilename());       
+	            //pstmt.setInt(5, newproduct.getAmount());//商品庫存
+	            //pstmt.setInt(ˊ6, newproduct.getLeave_amount());//商品買去數量
+	            result = pstmt.executeUpdate() > 0;
+	           
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return result;
+	    }
+		
+		// 刪除商品
+	    public boolean delProduct(int pid) {
+	        boolean flag = false;
+	        String sqlStr = "delete from goods where id = ?";
+	        try {
+	        	 PreparedStatement pstmt = conn.prepareStatement(sqlStr);
+	        	 pstmt.setInt(1, pid);
+	        	 
+	            flag = pstmt.executeUpdate(sqlStr) > 0;
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return flag;
+	    }
+
+	    
+	    // 更新商品數量
+	    public boolean updateProduct(Product product) {
+	        boolean flag = false;
+
+	        String sqlStr = "update products set [product_name]='" + product.getName() + "'" +
+	                ",[category]='" + product.getCategory() + "'" +
+	                ",[product_quantity]='" + product.getQuantity() + "'" +
+	                 "where id = '" + product.getPid() + "'" ;
+	        try {
+	           
+	            Statement stmt = conn.createStatement();           
+	            flag =   stmt.executeUpdate(sqlStr) > 0;        
+	        } catch (Exception e) {			
+				e.printStackTrace();
+			}
+	        return flag;
+	    }
+	
+	}
+

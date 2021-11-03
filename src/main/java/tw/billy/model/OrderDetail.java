@@ -5,13 +5,9 @@ public class OrderDetail extends Product{
 	private int orderdetailid;
 	private String orderNo;
 	private int pid;
-	private int uid;
+	//private int uid;
 	private int orderquentity;
 	private String date;
-
-	
-
-	
 
 	public OrderDetail() {
 
@@ -41,13 +37,13 @@ public class OrderDetail extends Product{
 		this.pid = pid;
 	}
 
-	public int getUid() {
-		return uid;
-	}
-
-	public void setUid(int uid) {
-		this.uid = uid;
-	}
+//	public int getUid() {
+//		return uid;
+//	}
+//
+//	public void setUid(int uid) {
+//		this.uid = uid;
+//	}
 
 	public int getOrderquentity() {
 		return orderquentity;

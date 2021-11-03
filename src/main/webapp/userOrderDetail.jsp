@@ -11,12 +11,12 @@ List<OrderDetail> orders = null;
 //HttpSession session1 = = request.getSession(false); //Duplicate local variable session
 Integer userId = (Integer) session.getAttribute("userId");
 //驗證登入
-//if(userId != null){
+if(userId != null){
 	orders = new OrderDetailDao(DataBaseConnection.getConnection()).UserOrders(userId);
 
-//}else{
-	//response.sendRedirect("login.jsp");
-//}
+}else{
+	response.sendRedirect("login.jsp");
+}
 	 ArrayList<Cart> cart_list = (ArrayList) session.getAttribute("cart-list");
 	 if (cart_list != null) {
 	 	ProductDao pDao = new ProductDao(DataBaseConnection.getConnection());
@@ -37,7 +37,7 @@ Integer userId = (Integer) session.getAttribute("userId");
 <link rel="stylesheet" href="css/product.css">
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-<title>確認訂單</title>
+<title>確認會員所有訂單</title>
 </head>
 <body>
 	<%@include file="include/header.jsp"%>
@@ -47,7 +47,7 @@ Integer userId = (Integer) session.getAttribute("userId");
 		<div style="height: 100px;"></div>
 		<!--佔位-->
 		<div class="row" id="main_container"
-			style="margin: 10px 20px 50px 20px;">
+			style="margin: 10px 20px 50px 20px; ">
 
 			<div class="container">
 				<div class="card-header my-3">
@@ -58,13 +58,12 @@ Integer userId = (Integer) session.getAttribute("userId");
 						<tr>
 
 							<th scope="col"><h2>訂單日期</h2></th>
-							<th scope="col"><h2>名稱</h2></th>
+							<th scope="col"><h2>訂單編號</h2></th>							
+							<th scope="col"><h2>商品名稱</h2></th>
 							<th scope="col"><h2>商品</h2></th>
-							<th scope="col"><h2>商品類別</h2></th>
 							<th scope="col"><h2>個數</h2></th>
 							<th scope="col"><h2>金額</h2></th>
-							<th scope="col"><h2>移除</h2></th>
-
+ 
 						</tr>
 					</thead>
 					<tbody>
@@ -73,30 +72,27 @@ Integer userId = (Integer) session.getAttribute("userId");
 							for (OrderDetail od : orders) {
 						%>
 						<tr>
+						
 							<td><h4><%=od.getDate()%></h4></td>
+							<td><h4><%=od.getOrderNo()%></h4></td>
 							<td><h4><%=od.getName()%></h4></td>
 							<td><img alt="cart-img"
 								src="products_img/<%=od.getFilename()%>"></td>
-							<td><h4><%=od.getCategory()%></h4></td>
 							<td><h4><%=od.getOrderquentity()%></h4></td>
 							<td><h4><%=od.getPrice()%></h4></td>
-							<td><a class="btn btn-sm btn-secondary"
-								href="cancel-order?id=<%=od.getOrderdetailid()%>"><i
-									class="fas fa-trash-alt"></i></a></td>
+					
 						<% }
 						}%>
 				</table>
-
+                 <div style="margin-top: 20px;">
 				
-					<form action="order-now" method="post" class="form-inline">
-						<button type="submit" class="btn btn-primary btn-sm">確認訂單</button>
-					</form>
-					<a class="mx-3 btn btn-primary" href="real_Products.jsp">繼續購物</a>
+					
+					</div>
 				</div>
 			</div>
 		
 	</section>
-	<%@ include file="include/helpButton.html"%>
+	<%@include file="include/helpButton.html"%>
 	<%@include file="include/footer.jsp"%>
 </body>
 </html>

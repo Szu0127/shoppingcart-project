@@ -56,4 +56,14 @@ public class UserService {
 	public void updateImage(String username, String image) {
 		userDao.updateImage(username, image);
 	}
+	
+	//確認餘額
+	public User getUserAmount(Integer userId) {
+		return userDao.getUserAmount(userId);
+	}
+	
+	//購買商品扣款
+	public void buyVideoUseAmount(Integer videoPrice, Integer userId) {
+		userDao.buyVideoUseAmount(videoPrice, userId);
+	}
 }

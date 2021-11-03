@@ -184,8 +184,8 @@
                                             </li>
                                             <li class="nav-item">
                                                 <a class="nav-link active"
-                                                   aria-current="page" href="cart.jsp">
-                                                    <img src="images/card-checklist.svg" alt="order.jsp" width="30"
+                                                   aria-current="page" href="userOrderDetail.jsp">
+                                                    <img src="images/card-checklist.svg" alt="" width="30"
                                                          height="24" class="d-inline-block align-text-left">
                                                     訂單查詢
                                                 </a>

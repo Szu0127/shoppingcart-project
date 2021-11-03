@@ -18,8 +18,8 @@
 }
 
 *::selection {
-	background: var(- -orange);
-	color: #fff;
+	background: var(--orange);
+/* 	color: #fff; */
 }
 
 html {
@@ -41,7 +41,7 @@ section {
 .heading .logo span {
 	font-size: 3.5rem;
 	background: rgba(255, 165, 0, .2);
-	color: var(- -orange);
+	color: var(--orange);
 	border-radius: .5rem;
 	padding: .2rem 1rem;
 }
@@ -239,7 +239,7 @@ header .search-bar-container label:hover {
 }
 
 #menu-bar {
-	color: #fff;
+/* 	color: #fff; */
 	border: .1rem solid #fff;
 	border-radius: .5rem;
 	font-size: 3rem;
